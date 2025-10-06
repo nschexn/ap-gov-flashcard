@@ -3,62 +3,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AP U.S. Government & Politics Quiz Game</title>
+    <title>AP U.S. Government Quiz Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-        .quiz-container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px #ccc; }
-        h2 { font-size: 1.2em; }
-        .choices { list-style: none; padding: 0; }
-        .choices li { margin: 10px 0; }
-        button { padding: 10px 15px; font-size: 1em; border: none; border-radius: 5px; background: #007BFF; color: white; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .feedback { margin-top: 15px; font-weight: bold; }
+        body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+        h1 { text-align: center; }
+        .question-box { margin-top: 20px; }
+        .choices button { display: block; margin: 10px 0; width: 100%; padding: 10px; font-size: 16px; }
+        .feedback { margin-top: 10px; font-weight: bold; }
+        .progress { margin-top: 20px; }
+        .score { margin-top: 10px; font-weight: bold; }
+        #topicSelect { font-size: 16px; padding: 5px; margin-bottom: 20px; width: 100%; }
     </style>
 </head>
 <body>
-    <div class="quiz-container">
-        <h2 id="question"></h2>
-        <ul class="choices" id="choices"></ul>
+    <h1>AP U.S. Government Quiz Game</h1>
+    <label for="topicSelect">Choose a topic:</label>
+    <select id="topicSelect">
+        <option value="All">All Topics</option>
+<option value="Branches of Government">Branches of Government</option>
+<option value="Constitutional Framework">Constitutional Framework</option>
+<option value="Federalism">Federalism</option>
+<option value="Foundational Concepts">Foundational Concepts</option>
+<option value="General">General</option>
+<option value="Key Documents and Cases">Key Documents and Cases</option>
+
+    </select>
+    <div class="question-box">
+        <div id="question"></div>
+        <div class="choices" id="choices"></div>
         <div class="feedback" id="feedback"></div>
+        <div class="progress" id="progress"></div>
+        <div class="score" id="score"></div>
     </div>
     <script>
-        const questions = [{"question": "What principle is described as the government's power being derived from the people?", "choices": ["Popular Sovereignty", "Federalism", "Republicanism", "Social Contract"], "answer": "Popular Sovereignty"}, {"question": "Which document argued against a strong central government and supported states' rights?", "choices": ["Federalist 10", "Federalist 51", "Brutus I", "U.S. Constitution"], "answer": "Brutus I"}, {"question": "Which clause gives Congress the power to pass all laws necessary and proper for carrying out its duties?", "choices": ["Supremacy Clause", "Commerce Clause", "Elastic Clause", "Due Process Clause"], "answer": "Elastic Clause"}, {"question": "Which Supreme Court case established federal supremacy over state law?", "choices": ["U.S. v. Lopez", "McCulloch v. Maryland", "Marbury v. Madison", "Gibbons v. Ogden"], "answer": "McCulloch v. Maryland"}, {"question": "What is the main idea of Federalist 10?", "choices": ["Checks and balances", "Separation of powers", "Control of factions", "Judicial review"], "answer": "Control of factions"}, {"question": "Which plan proposed a bicameral legislature based on population?", "choices": ["New Jersey Plan", "Virginia Plan", "Connecticut Compromise", "Three-Fifths Compromise"], "answer": "Virginia Plan"}, {"question": "Which ideology emphasizes minimal government intervention and maximum individual liberty?", "choices": ["Socialism", "Conservatism", "Liberalism", "Libertarianism"], "answer": "Libertarianism"}, {"question": "What are the first ten amendments to the Constitution called?", "choices": ["Articles of Confederation", "Federalist Papers", "Bill of Rights", "Civil War Amendments"], "answer": "Bill of Rights"}, {"question": "Which clause establishes that the Constitution is the supreme law of the land?", "choices": ["Supremacy Clause", "Commerce Clause", "Elastic Clause", "Equal Protection Clause"], "answer": "Supremacy Clause"}, {"question": "What type of democracy elects representatives to make decisions on behalf of the people?", "choices": ["Direct Democracy", "Representative Democracy", "Constitutional Democracy", "Theocracy"], "answer": "Representative Democracy"}];
-        let currentQuestion = 0;
+        const allQuestions = [{"question": "What is the main idea of the Declaration of Independence?", "choices": ["To establish a monarchy in the United States", "To declare independence from Britain and outline grievances", "To create the U.S. Constitution", "To form a new religion"], "answer": 1, "topic": "Foundational Concepts"}, {"question": "Which principle states that government derives its power from the consent of the governed?", "choices": ["Federalism", "Natural Rights", "Popular Sovereignty", "Checks and Balances"], "answer": 2, "topic": "General"}, {"question": "Which document argued against the ratification of the U.S. Constitution?", "choices": ["Federalist 10", "Federalist 51", "Brutus I", "The Constitution"], "answer": 2, "topic": "Constitutional Framework"}, {"question": "What was the outcome of McCulloch v. Maryland?", "choices": ["States could tax federal banks", "Congress lacked the power to create a national bank", "Federal government has implied powers and supremacy over states", "The Bill of Rights does not apply to states"], "answer": 2, "topic": "Federalism"}, {"question": "Which clause gives Congress the power to pass all laws necessary and proper for carrying out the enumerated list of powers?", "choices": ["Supremacy Clause", "Commerce Clause", "Elastic Clause", "Equal Protection Clause"], "answer": 2, "topic": "Branches of Government"}, {"question": "Which of the following best describes dual federalism?", "choices": ["Federal and state governments share responsibilities", "Federal government dominates state governments", "Federal and state governments operate independently in their own spheres", "Only state governments have power"], "answer": 2, "topic": "Federalism"}, {"question": "What is the main idea of Federalist 10?", "choices": ["The importance of a strong executive", "The need for a Bill of Rights", "The dangers of factions and how to control them", "The benefits of a unicameral legislature"], "answer": 2, "topic": "Constitutional Framework"}, {"question": "Which amendment abolished slavery?", "choices": ["13th Amendment", "14th Amendment", "15th Amendment", "1st Amendment"], "answer": 0, "topic": "Key Documents and Cases"}, {"question": "What is the purpose of the Electoral College?", "choices": ["To elect members of Congress", "To elect the President of the United States", "To amend the Constitution", "To appoint Supreme Court justices"], "answer": 1, "topic": "General"}, {"question": "Which of the following is an example of an implied power?", "choices": ["Declaring war", "Coining money", "Establishing a national bank", "Regulating interstate commerce"], "answer": 2, "topic": "Branches of Government"}];
+        let filteredQuestions = [...allQuestions];
+        let currentIndex = 0;
+        let score = 0;
 
-        function loadQuestion() {
-            const q = questions[currentQuestion];
-            document.getElementById("question").textContent = q.question;
-            const choicesList = document.getElementById("choices");
-            choicesList.innerHTML = "";
-            document.getElementById("feedback").textContent = "";
-            q.choices.forEach(choice => {
-                const li = document.createElement("li");
+        const questionEl = document.getElementById("question");
+        const choicesEl = document.getElementById("choices");
+        const feedbackEl = document.getElementById("feedback");
+        const progressEl = document.getElementById("progress");
+        const scoreEl = document.getElementById("score");
+        const topicSelect = document.getElementById("topicSelect");
+
+        topicSelect.addEventListener("change", () => {
+            const selectedTopic = topicSelect.value;
+            if (selectedTopic === "All") {
+                filteredQuestions = [...allQuestions];
+            } else {
+                filteredQuestions = allQuestions.filter(q => q.topic === selectedTopic);
+            }
+            currentIndex = 0;
+            score = 0;
+            showQuestion();
+        });
+
+        function showQuestion() {
+            if (currentIndex >= filteredQuestions.length) {
+                questionEl.innerHTML = "🎉 You've completed the quiz!";
+                choicesEl.innerHTML = "";
+                feedbackEl.innerHTML = "";
+                progressEl.innerHTML = "";
+                scoreEl.innerHTML = `Final Score: ${score} / ${filteredQuestions.length}`;
+                return;
+            }
+
+            const q = filteredQuestions[currentIndex];
+            questionEl.innerHTML = `<strong>Q${currentIndex + 1}:</strong> ${q.question}`;
+            choicesEl.innerHTML = "";
+            feedbackEl.innerHTML = "";
+            progressEl.innerHTML = `Progress: ${currentIndex + 1} / ${filteredQuestions.length}`;
+            scoreEl.innerHTML = `Score: ${score}`;
+
+            q.choices.forEach((choice, index) => {
                 const btn = document.createElement("button");
                 btn.textContent = choice;
-                btn.onclick = () => checkAnswer(choice);
-                li.appendChild(btn);
-                choicesList.appendChild(li);
+                btn.onclick = () => {
+                    if (index === q.answer) {
+                        feedbackEl.textContent = "✅ Correct!";
+                        score++;
+                        currentIndex++;
+                        setTimeout(showQuestion, 1000);
+                    } else {
+                        feedbackEl.textContent = "❌ Try again.";
+                    }
+                    scoreEl.innerHTML = `Score: ${score}`;
+                };
+                choicesEl.appendChild(btn);
             });
         }
 
-        function checkAnswer(selected) {
-            const correct = questions[currentQuestion].answer;
-            if (selected === correct) {
-                document.getElementById("feedback").textContent = "✅ Correct!";
-                currentQuestion++;
-                if (currentQuestion < questions.length) {
-                    setTimeout(loadQuestion, 1000);
-                } else {
-                    document.getElementById("question").textContent = "🎉 You've completed the quiz!";
-                    document.getElementById("choices").innerHTML = "";
-                }
-            } else {
-                document.getElementById("feedback").textContent = "❌ Try again.";
-            }
-        }
-
-        loadQuestion();
+        showQuestion();
     </script>
 </body>
 </html>
