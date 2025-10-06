@@ -2,162 +2,2331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AP U.S. Government Quiz Game</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f4f4f4;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-    }
-    .question {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
-    .choices button {
-      display: block;
-      width: 100%;
-      margin: 5px 0;
-      padding: 10px;
-      font-size: 1em;
-    }
-    .feedback {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .hidden {
-      display: none;
-    }
-    .progress {
-      margin-top: 20px;
-    }
-    .score {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    select {
-      font-size: 1em;
-      margin-bottom: 20px;
-      padding: 5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>AP U.S. Government & Politics Quiz Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+        h1 { text-align: center; }
+        .question-box { margin-top: 20px; }
+        .choices { list-style: none; padding: 0; }
+        .choices li { margin: 10px 0; }
+        button { padding: 10px 20px; font-size: 16px; }
+        #feedback { margin-top: 10px; font-weight: bold; }
+        #score { margin-top: 10px; }
+        #progress { margin-top: 10px; }
+        #topic-selector { margin-bottom: 20px; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>AP U.S. Government Quiz</h1>
-    <label for="topicSelect">Choose a topic:</label>
-    <select id="topicSelect">
-      <option value="All">All Topics</option>
-      <option value="Branches of Government">Branches of Government</option>
-      <option value="Clauses and Amendments">Clauses and Amendments</option>
-      <option value="Constitutional Framework">Constitutional Framework</option>
-      <option value="Federalism">Federalism</option>
-      <option value="Foundational Concepts">Foundational Concepts</option>
-      <option value="General">General</option>
-      <option value="Key Documents">Key Documents</option>
-      <option value="Key Documents and Cases">Key Documents and Cases</option>
-      <option value="Political Ideologies">Political Ideologies</option>
-      <option value="Supreme Court Cases">Supreme Court Cases</option>
-
-    </select>
-    <div id="quiz">
-      <div class="question" id="questionText"></div>
-      <div class="choices" id="choicesContainer"></div>
-      <div class="feedback" id="feedback"></div>
-      <div class="progress" id="progressBar"></div>
-      <div class="score" id="scoreDisplay"></div>
+    <h1>AP U.S. Government & Politics Quiz</h1>
+    <div id="topic-selector">
+        <label for="topic">Choose a topic:</label>
+        <select id="topic">
+            <option value="">-- Select Topic --</option>
+        </select>
+        <button onclick="startQuiz()">Start Quiz</button>
     </div>
-  </div>
-  <script>
-    const allQuestions = JSON.parse(`"[{\"question\": \"What is the main idea of the Declaration of Independence?\", \"choices\": [\"To establish a monarchy in the United States\", \"To declare independence from Britain and outline grievances\", \"To create the U.S. Constitution\", \"To form a new religion\"], \"answer\": 1, \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which principle states that government derives its power from the consent of the governed?\", \"choices\": [\"Federalism\", \"Natural Rights\", \"Popular Sovereignty\", \"Checks and Balances\"], \"answer\": 2, \"topic\": \"General\"}, {\"question\": \"Which document argued against the ratification of the U.S. Constitution?\", \"choices\": [\"Federalist 10\", \"Federalist 51\", \"Brutus I\", \"The Constitution\"], \"answer\": 2, \"topic\": \"Constitutional Framework\"}, {\"question\": \"What was the outcome of McCulloch v. Maryland?\", \"choices\": [\"States could tax federal banks\", \"Congress lacked the power to create a national bank\", \"Federal government has implied powers and supremacy over states\", \"The Bill of Rights does not apply to states\"], \"answer\": 2, \"topic\": \"Federalism\"}, {\"question\": \"Which clause gives Congress the power to pass all laws necessary and proper for carrying out the enumerated list of powers?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Equal Protection Clause\"], \"answer\": 2, \"topic\": \"Branches of Government\"}, {\"question\": \"Which of the following best describes dual federalism?\", \"choices\": [\"Federal and state governments share responsibilities\", \"Federal government dominates state governments\", \"Federal and state governments operate independently in their own spheres\", \"Only state governments have power\"], \"answer\": 2, \"topic\": \"Federalism\"}, {\"question\": \"What is the main idea of Federalist 10?\", \"choices\": [\"The importance of a strong executive\", \"The need for a Bill of Rights\", \"The dangers of factions and how to control them\", \"The benefits of a unicameral legislature\"], \"answer\": 2, \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which amendment abolished slavery?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"1st Amendment\"], \"answer\": 0, \"topic\": \"Key Documents and Cases\"}, {\"question\": \"What is the purpose of the Electoral College?\", \"choices\": [\"To elect members of Congress\", \"To elect the President of the United States\", \"To amend the Constitution\", \"To appoint Supreme Court justices\"], \"answer\": 1, \"topic\": \"General\"}, {\"question\": \"Which of the following is an example of an implied power?\", \"choices\": [\"Declaring war\", \"Coining money\", \"Establishing a national bank\", \"Regulating interstate commerce\"], \"answer\": 2, \"topic\": \"Branches of Government\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which concept emphasizes a government based on the consent of the governed?\", \"choices\": [\"Republicanism\", \"Authoritarianism\", \"Totalitarianism\", \"Theocracy\"], \"answer\": \"Republicanism\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"What was the main weakness of the Articles of Confederation?\", \"choices\": [\"Lack of central authority\", \"Too much taxation\", \"Too strong executive\", \"No state governments\"], \"answer\": \"Lack of central authority\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"What was the main weakness of the Articles of Confederation?\", \"choices\": [\"Lack of central authority\", \"Too much taxation\", \"Too strong executive\", \"No state governments\"], \"answer\": \"Lack of central authority\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which case established the principle of implied powers and federal supremacy?\", \"choices\": [\"McCulloch v. Maryland\", \"U.S. v. Lopez\", \"Marbury v. Madison\", \"Gibbons v. Ogden\"], \"answer\": \"McCulloch v. Maryland\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which concept emphasizes a government based on the consent of the governed?\", \"choices\": [\"Republicanism\", \"Authoritarianism\", \"Totalitarianism\", \"Theocracy\"], \"answer\": \"Republicanism\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which case limited Congress's power under the Commerce Clause?\", \"choices\": [\"U.S. v. Lopez\", \"McCulloch v. Maryland\", \"Gibbons v. Ogden\", \"Brown v. Board of Education\"], \"answer\": \"U.S. v. Lopez\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which case established the principle of implied powers and federal supremacy?\", \"choices\": [\"McCulloch v. Maryland\", \"U.S. v. Lopez\", \"Marbury v. Madison\", \"Gibbons v. Ogden\"], \"answer\": \"McCulloch v. Maryland\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which ideology emphasizes minimal government intervention in personal and economic matters?\", \"choices\": [\"Libertarianism\", \"Socialism\", \"Liberalism\", \"Conservatism\"], \"answer\": \"Libertarianism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which case limited Congress's power under the Commerce Clause?\", \"choices\": [\"U.S. v. Lopez\", \"McCulloch v. Maryland\", \"Gibbons v. Ogden\", \"Brown v. Board of Education\"], \"answer\": \"U.S. v. Lopez\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which case limited Congress's power under the Commerce Clause?\", \"choices\": [\"U.S. v. Lopez\", \"McCulloch v. Maryland\", \"Gibbons v. Ogden\", \"Brown v. Board of Education\"], \"answer\": \"U.S. v. Lopez\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which ideology supports government programs to reduce economic inequality?\", \"choices\": [\"Socialism\", \"Libertarianism\", \"Conservatism\", \"Anarchism\"], \"answer\": \"Socialism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which ideology emphasizes minimal government intervention in personal and economic matters?\", \"choices\": [\"Libertarianism\", \"Socialism\", \"Liberalism\", \"Conservatism\"], \"answer\": \"Libertarianism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which ideology supports government programs to reduce economic inequality?\", \"choices\": [\"Socialism\", \"Libertarianism\", \"Conservatism\", \"Anarchism\"], \"answer\": \"Socialism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which case established the principle of implied powers and federal supremacy?\", \"choices\": [\"McCulloch v. Maryland\", \"U.S. v. Lopez\", \"Marbury v. Madison\", \"Gibbons v. Ogden\"], \"answer\": \"McCulloch v. Maryland\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which concept emphasizes a government based on the consent of the governed?\", \"choices\": [\"Republicanism\", \"Authoritarianism\", \"Totalitarianism\", \"Theocracy\"], \"answer\": \"Republicanism\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which ideology supports government programs to reduce economic inequality?\", \"choices\": [\"Socialism\", \"Libertarianism\", \"Conservatism\", \"Anarchism\"], \"answer\": \"Socialism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"What was the main weakness of the Articles of Confederation?\", \"choices\": [\"Lack of central authority\", \"Too much taxation\", \"Too strong executive\", \"No state governments\"], \"answer\": \"Lack of central authority\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which case limited Congress's power under the Commerce Clause?\", \"choices\": [\"U.S. v. Lopez\", \"McCulloch v. Maryland\", \"Gibbons v. Ogden\", \"Brown v. Board of Education\"], \"answer\": \"U.S. v. Lopez\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which ideology supports government programs to reduce economic inequality?\", \"choices\": [\"Socialism\", \"Libertarianism\", \"Conservatism\", \"Anarchism\"], \"answer\": \"Socialism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"What was the main weakness of the Articles of Confederation?\", \"choices\": [\"Lack of central authority\", \"Too much taxation\", \"Too strong executive\", \"No state governments\"], \"answer\": \"Lack of central authority\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"What was the main weakness of the Articles of Confederation?\", \"choices\": [\"Lack of central authority\", \"Too much taxation\", \"Too strong executive\", \"No state governments\"], \"answer\": \"Lack of central authority\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"Which ideology emphasizes minimal government intervention in personal and economic matters?\", \"choices\": [\"Libertarianism\", \"Socialism\", \"Liberalism\", \"Conservatism\"], \"answer\": \"Libertarianism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"Which ideology emphasizes minimal government intervention in personal and economic matters?\", \"choices\": [\"Libertarianism\", \"Socialism\", \"Liberalism\", \"Conservatism\"], \"answer\": \"Libertarianism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which ideology supports government programs to reduce economic inequality?\", \"choices\": [\"Socialism\", \"Libertarianism\", \"Conservatism\", \"Anarchism\"], \"answer\": \"Socialism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which case established the principle of implied powers and federal supremacy?\", \"choices\": [\"McCulloch v. Maryland\", \"U.S. v. Lopez\", \"Marbury v. Madison\", \"Gibbons v. Ogden\"], \"answer\": \"McCulloch v. Maryland\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which case established the principle of implied powers and federal supremacy?\", \"choices\": [\"McCulloch v. Maryland\", \"U.S. v. Lopez\", \"Marbury v. Madison\", \"Gibbons v. Ogden\"], \"answer\": \"McCulloch v. Maryland\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which ideology emphasizes minimal government intervention in personal and economic matters?\", \"choices\": [\"Libertarianism\", \"Socialism\", \"Liberalism\", \"Conservatism\"], \"answer\": \"Libertarianism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which case limited Congress's power under the Commerce Clause?\", \"choices\": [\"U.S. v. Lopez\", \"McCulloch v. Maryland\", \"Gibbons v. Ogden\", \"Brown v. Board of Education\"], \"answer\": \"U.S. v. Lopez\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which amendment abolished slavery in the United States?\", \"choices\": [\"13th Amendment\", \"14th Amendment\", \"15th Amendment\", \"10th Amendment\"], \"answer\": \"13th Amendment\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which case established the principle of implied powers and federal supremacy?\", \"choices\": [\"McCulloch v. Maryland\", \"U.S. v. Lopez\", \"Marbury v. Madison\", \"Gibbons v. Ogden\"], \"answer\": \"McCulloch v. Maryland\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which ideology supports government programs to reduce economic inequality?\", \"choices\": [\"Socialism\", \"Libertarianism\", \"Conservatism\", \"Anarchism\"], \"answer\": \"Socialism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which ideology emphasizes minimal government intervention in personal and economic matters?\", \"choices\": [\"Libertarianism\", \"Socialism\", \"Liberalism\", \"Conservatism\"], \"answer\": \"Libertarianism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"What was the main weakness of the Articles of Confederation?\", \"choices\": [\"Lack of central authority\", \"Too much taxation\", \"Too strong executive\", \"No state governments\"], \"answer\": \"Lack of central authority\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"Which concept emphasizes a government based on the consent of the governed?\", \"choices\": [\"Republicanism\", \"Authoritarianism\", \"Totalitarianism\", \"Theocracy\"], \"answer\": \"Republicanism\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which case established the principle of implied powers and federal supremacy?\", \"choices\": [\"McCulloch v. Maryland\", \"U.S. v. Lopez\", \"Marbury v. Madison\", \"Gibbons v. Ogden\"], \"answer\": \"McCulloch v. Maryland\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which ideology emphasizes minimal government intervention in personal and economic matters?\", \"choices\": [\"Libertarianism\", \"Socialism\", \"Liberalism\", \"Conservatism\"], \"answer\": \"Libertarianism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"What was the main weakness of the Articles of Confederation?\", \"choices\": [\"Lack of central authority\", \"Too much taxation\", \"Too strong executive\", \"No state governments\"], \"answer\": \"Lack of central authority\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which concept emphasizes a government based on the consent of the governed?\", \"choices\": [\"Republicanism\", \"Authoritarianism\", \"Totalitarianism\", \"Theocracy\"], \"answer\": \"Republicanism\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which concept emphasizes a government based on the consent of the governed?\", \"choices\": [\"Republicanism\", \"Authoritarianism\", \"Totalitarianism\", \"Theocracy\"], \"answer\": \"Republicanism\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which case established the principle of implied powers and federal supremacy?\", \"choices\": [\"McCulloch v. Maryland\", \"U.S. v. Lopez\", \"Marbury v. Madison\", \"Gibbons v. Ogden\"], \"answer\": \"McCulloch v. Maryland\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which case limited Congress's power under the Commerce Clause?\", \"choices\": [\"U.S. v. Lopez\", \"McCulloch v. Maryland\", \"Gibbons v. Ogden\", \"Brown v. Board of Education\"], \"answer\": \"U.S. v. Lopez\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"What was the main weakness of the Articles of Confederation?\", \"choices\": [\"Lack of central authority\", \"Too much taxation\", \"Too strong executive\", \"No state governments\"], \"answer\": \"Lack of central authority\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which concept emphasizes a government based on the consent of the governed?\", \"choices\": [\"Republicanism\", \"Authoritarianism\", \"Totalitarianism\", \"Theocracy\"], \"answer\": \"Republicanism\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which concept emphasizes a government based on the consent of the governed?\", \"choices\": [\"Republicanism\", \"Authoritarianism\", \"Totalitarianism\", \"Theocracy\"], \"answer\": \"Republicanism\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which ideology supports government programs to reduce economic inequality?\", \"choices\": [\"Socialism\", \"Libertarianism\", \"Conservatism\", \"Anarchism\"], \"answer\": \"Socialism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which concept emphasizes a government based on the consent of the governed?\", \"choices\": [\"Republicanism\", \"Authoritarianism\", \"Totalitarianism\", \"Theocracy\"], \"answer\": \"Republicanism\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which type of federalism is often described as 'layer cake federalism'?\", \"choices\": [\"Dual Federalism\", \"Cooperative Federalism\", \"New Federalism\", \"Fiscal Federalism\"], \"answer\": \"Dual Federalism\", \"topic\": \"Federalism\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which ideology emphasizes minimal government intervention in personal and economic matters?\", \"choices\": [\"Libertarianism\", \"Socialism\", \"Liberalism\", \"Conservatism\"], \"answer\": \"Libertarianism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which case limited Congress's power under the Commerce Clause?\", \"choices\": [\"U.S. v. Lopez\", \"McCulloch v. Maryland\", \"Gibbons v. Ogden\", \"Brown v. Board of Education\"], \"answer\": \"U.S. v. Lopez\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which branch of government interprets the laws?\", \"choices\": [\"Judicial\", \"Legislative\", \"Executive\", \"Bureaucracy\"], \"answer\": \"Judicial\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which case established the principle of implied powers and federal supremacy?\", \"choices\": [\"McCulloch v. Maryland\", \"U.S. v. Lopez\", \"Marbury v. Madison\", \"Gibbons v. Ogden\"], \"answer\": \"McCulloch v. Maryland\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"What was the main weakness of the Articles of Confederation?\", \"choices\": [\"Lack of central authority\", \"Too much taxation\", \"Too strong executive\", \"No state governments\"], \"answer\": \"Lack of central authority\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which Federalist Paper discusses the dangers of factions?\", \"choices\": [\"Federalist 10\", \"Federalist 21\", \"Federalist 51\", \"Brutus I\"], \"answer\": \"Federalist 10\", \"topic\": \"Key Documents\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which clause allows Congress to make laws necessary and proper for executing its powers?\", \"choices\": [\"Elastic Clause\", \"Supremacy Clause\", \"Commerce Clause\", \"Due Process Clause\"], \"answer\": \"Elastic Clause\", \"topic\": \"Clauses and Amendments\"}, {\"question\": \"Which branch of government has the power to declare war?\", \"choices\": [\"Legislative\", \"Executive\", \"Judicial\", \"State Governments\"], \"answer\": \"Legislative\", \"topic\": \"Branches of Government\"}, {\"question\": \"Which case limited Congress's power under the Commerce Clause?\", \"choices\": [\"U.S. v. Lopez\", \"McCulloch v. Maryland\", \"Gibbons v. Ogden\", \"Brown v. Board of Education\"], \"answer\": \"U.S. v. Lopez\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which compromise created a bicameral legislature in the U.S. Constitution?\", \"choices\": [\"Connecticut Compromise\", \"Three-Fifths Compromise\", \"Virginia Plan\", \"New Jersey Plan\"], \"answer\": \"Connecticut Compromise\", \"topic\": \"Constitutional Framework\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which ideology supports government programs to reduce economic inequality?\", \"choices\": [\"Socialism\", \"Libertarianism\", \"Conservatism\", \"Anarchism\"], \"answer\": \"Socialism\", \"topic\": \"Political Ideologies\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}, {\"question\": \"Which case limited Congress's power under the Commerce Clause?\", \"choices\": [\"U.S. v. Lopez\", \"McCulloch v. Maryland\", \"Gibbons v. Ogden\", \"Brown v. Board of Education\"], \"answer\": \"U.S. v. Lopez\", \"topic\": \"Supreme Court Cases\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"Which clause establishes that federal law is supreme over state law?\", \"choices\": [\"Supremacy Clause\", \"Commerce Clause\", \"Elastic Clause\", \"Due Process Clause\"], \"answer\": \"Supremacy Clause\", \"topic\": \"Federalism\"}, {\"question\": \"What principle states that the government's power comes from the people?\", \"choices\": [\"Popular Sovereignty\", \"Federalism\", \"Checks and Balances\", \"Judicial Review\"], \"answer\": \"Popular Sovereignty\", \"topic\": \"Foundational Concepts\"}, {\"question\": \"Which document argued against a large central government and favored small republics?\", \"choices\": [\"Brutus I\", \"Federalist 10\", \"Federalist 51\", \"U.S. Constitution\"], \"answer\": \"Brutus I\", \"topic\": \"Key Documents\"}]"`);
-    let filteredQuestions = [];
-    let currentQuestionIndex = 0;
-    let score = 0;
+    <div id="quiz-container" style="display:none;">
+        <div id="question-box" class="question-box"></div>
+        <ul id="choices" class="choices"></ul>
+        <div id="feedback"></div>
+        <div id="score"></div>
+        <div id="progress"></div>
+    </div>
+    <script>
+        const questions = {};
+        const rawQuestions = {
+    "Foundational Concepts": [
+        {
+            "question": "What is the main idea of the Declaration of Independence?",
+            "choices": [
+                "To establish a monarchy in the United States",
+                "To declare independence from Britain and outline grievances",
+                "To create the U.S. Constitution",
+                "To form a new religion"
+            ],
+            "answer": 1,
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "Which concept emphasizes a government based on the consent of the governed?",
+            "choices": [
+                "Republicanism",
+                "Authoritarianism",
+                "Totalitarianism",
+                "Theocracy"
+            ],
+            "answer": "Republicanism",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "Which concept emphasizes a government based on the consent of the governed?",
+            "choices": [
+                "Republicanism",
+                "Authoritarianism",
+                "Totalitarianism",
+                "Theocracy"
+            ],
+            "answer": "Republicanism",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "Which concept emphasizes a government based on the consent of the governed?",
+            "choices": [
+                "Republicanism",
+                "Authoritarianism",
+                "Totalitarianism",
+                "Theocracy"
+            ],
+            "answer": "Republicanism",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "Which concept emphasizes a government based on the consent of the governed?",
+            "choices": [
+                "Republicanism",
+                "Authoritarianism",
+                "Totalitarianism",
+                "Theocracy"
+            ],
+            "answer": "Republicanism",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "Which concept emphasizes a government based on the consent of the governed?",
+            "choices": [
+                "Republicanism",
+                "Authoritarianism",
+                "Totalitarianism",
+                "Theocracy"
+            ],
+            "answer": "Republicanism",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "Which concept emphasizes a government based on the consent of the governed?",
+            "choices": [
+                "Republicanism",
+                "Authoritarianism",
+                "Totalitarianism",
+                "Theocracy"
+            ],
+            "answer": "Republicanism",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "Which concept emphasizes a government based on the consent of the governed?",
+            "choices": [
+                "Republicanism",
+                "Authoritarianism",
+                "Totalitarianism",
+                "Theocracy"
+            ],
+            "answer": "Republicanism",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "Which concept emphasizes a government based on the consent of the governed?",
+            "choices": [
+                "Republicanism",
+                "Authoritarianism",
+                "Totalitarianism",
+                "Theocracy"
+            ],
+            "answer": "Republicanism",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "Which concept emphasizes a government based on the consent of the governed?",
+            "choices": [
+                "Republicanism",
+                "Authoritarianism",
+                "Totalitarianism",
+                "Theocracy"
+            ],
+            "answer": "Republicanism",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        },
+        {
+            "question": "What principle states that the government's power comes from the people?",
+            "choices": [
+                "Popular Sovereignty",
+                "Federalism",
+                "Checks and Balances",
+                "Judicial Review"
+            ],
+            "answer": "Popular Sovereignty",
+            "topic": "Foundational Concepts"
+        }
+    ],
+    "General": [
+        {
+            "question": "Which principle states that government derives its power from the consent of the governed?",
+            "choices": [
+                "Federalism",
+                "Natural Rights",
+                "Popular Sovereignty",
+                "Checks and Balances"
+            ],
+            "answer": 2,
+            "topic": "General"
+        },
+        {
+            "question": "What is the purpose of the Electoral College?",
+            "choices": [
+                "To elect members of Congress",
+                "To elect the President of the United States",
+                "To amend the Constitution",
+                "To appoint Supreme Court justices"
+            ],
+            "answer": 1,
+            "topic": "General"
+        }
+    ],
+    "Constitutional Framework": [
+        {
+            "question": "Which document argued against the ratification of the U.S. Constitution?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 51",
+                "Brutus I",
+                "The Constitution"
+            ],
+            "answer": 2,
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What is the main idea of Federalist 10?",
+            "choices": [
+                "The importance of a strong executive",
+                "The need for a Bill of Rights",
+                "The dangers of factions and how to control them",
+                "The benefits of a unicameral legislature"
+            ],
+            "answer": 2,
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What was the main weakness of the Articles of Confederation?",
+            "choices": [
+                "Lack of central authority",
+                "Too much taxation",
+                "Too strong executive",
+                "No state governments"
+            ],
+            "answer": "Lack of central authority",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What was the main weakness of the Articles of Confederation?",
+            "choices": [
+                "Lack of central authority",
+                "Too much taxation",
+                "Too strong executive",
+                "No state governments"
+            ],
+            "answer": "Lack of central authority",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What was the main weakness of the Articles of Confederation?",
+            "choices": [
+                "Lack of central authority",
+                "Too much taxation",
+                "Too strong executive",
+                "No state governments"
+            ],
+            "answer": "Lack of central authority",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What was the main weakness of the Articles of Confederation?",
+            "choices": [
+                "Lack of central authority",
+                "Too much taxation",
+                "Too strong executive",
+                "No state governments"
+            ],
+            "answer": "Lack of central authority",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What was the main weakness of the Articles of Confederation?",
+            "choices": [
+                "Lack of central authority",
+                "Too much taxation",
+                "Too strong executive",
+                "No state governments"
+            ],
+            "answer": "Lack of central authority",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What was the main weakness of the Articles of Confederation?",
+            "choices": [
+                "Lack of central authority",
+                "Too much taxation",
+                "Too strong executive",
+                "No state governments"
+            ],
+            "answer": "Lack of central authority",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What was the main weakness of the Articles of Confederation?",
+            "choices": [
+                "Lack of central authority",
+                "Too much taxation",
+                "Too strong executive",
+                "No state governments"
+            ],
+            "answer": "Lack of central authority",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What was the main weakness of the Articles of Confederation?",
+            "choices": [
+                "Lack of central authority",
+                "Too much taxation",
+                "Too strong executive",
+                "No state governments"
+            ],
+            "answer": "Lack of central authority",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "What was the main weakness of the Articles of Confederation?",
+            "choices": [
+                "Lack of central authority",
+                "Too much taxation",
+                "Too strong executive",
+                "No state governments"
+            ],
+            "answer": "Lack of central authority",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        },
+        {
+            "question": "Which compromise created a bicameral legislature in the U.S. Constitution?",
+            "choices": [
+                "Connecticut Compromise",
+                "Three-Fifths Compromise",
+                "Virginia Plan",
+                "New Jersey Plan"
+            ],
+            "answer": "Connecticut Compromise",
+            "topic": "Constitutional Framework"
+        }
+    ],
+    "Federalism": [
+        {
+            "question": "What was the outcome of McCulloch v. Maryland?",
+            "choices": [
+                "States could tax federal banks",
+                "Congress lacked the power to create a national bank",
+                "Federal government has implied powers and supremacy over states",
+                "The Bill of Rights does not apply to states"
+            ],
+            "answer": 2,
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which of the following best describes dual federalism?",
+            "choices": [
+                "Federal and state governments share responsibilities",
+                "Federal government dominates state governments",
+                "Federal and state governments operate independently in their own spheres",
+                "Only state governments have power"
+            ],
+            "answer": 2,
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which type of federalism is often described as 'layer cake federalism'?",
+            "choices": [
+                "Dual Federalism",
+                "Cooperative Federalism",
+                "New Federalism",
+                "Fiscal Federalism"
+            ],
+            "answer": "Dual Federalism",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        },
+        {
+            "question": "Which clause establishes that federal law is supreme over state law?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Supremacy Clause",
+            "topic": "Federalism"
+        }
+    ],
+    "Branches of Government": [
+        {
+            "question": "Which clause gives Congress the power to pass all laws necessary and proper for carrying out the enumerated list of powers?",
+            "choices": [
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Elastic Clause",
+                "Equal Protection Clause"
+            ],
+            "answer": 2,
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which of the following is an example of an implied power?",
+            "choices": [
+                "Declaring war",
+                "Coining money",
+                "Establishing a national bank",
+                "Regulating interstate commerce"
+            ],
+            "answer": 2,
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government interprets the laws?",
+            "choices": [
+                "Judicial",
+                "Legislative",
+                "Executive",
+                "Bureaucracy"
+            ],
+            "answer": "Judicial",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        },
+        {
+            "question": "Which branch of government has the power to declare war?",
+            "choices": [
+                "Legislative",
+                "Executive",
+                "Judicial",
+                "State Governments"
+            ],
+            "answer": "Legislative",
+            "topic": "Branches of Government"
+        }
+    ],
+    "Key Documents and Cases": [
+        {
+            "question": "Which amendment abolished slavery?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "1st Amendment"
+            ],
+            "answer": 0,
+            "topic": "Key Documents and Cases"
+        }
+    ],
+    "Key Documents": [
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which Federalist Paper discusses the dangers of factions?",
+            "choices": [
+                "Federalist 10",
+                "Federalist 21",
+                "Federalist 51",
+                "Brutus I"
+            ],
+            "answer": "Federalist 10",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        },
+        {
+            "question": "Which document argued against a large central government and favored small republics?",
+            "choices": [
+                "Brutus I",
+                "Federalist 10",
+                "Federalist 51",
+                "U.S. Constitution"
+            ],
+            "answer": "Brutus I",
+            "topic": "Key Documents"
+        }
+    ],
+    "Clauses and Amendments": [
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which amendment abolished slavery in the United States?",
+            "choices": [
+                "13th Amendment",
+                "14th Amendment",
+                "15th Amendment",
+                "10th Amendment"
+            ],
+            "answer": "13th Amendment",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        },
+        {
+            "question": "Which clause allows Congress to make laws necessary and proper for executing its powers?",
+            "choices": [
+                "Elastic Clause",
+                "Supremacy Clause",
+                "Commerce Clause",
+                "Due Process Clause"
+            ],
+            "answer": "Elastic Clause",
+            "topic": "Clauses and Amendments"
+        }
+    ],
+    "Supreme Court Cases": [
+        {
+            "question": "Which case established the principle of implied powers and federal supremacy?",
+            "choices": [
+                "McCulloch v. Maryland",
+                "U.S. v. Lopez",
+                "Marbury v. Madison",
+                "Gibbons v. Ogden"
+            ],
+            "answer": "McCulloch v. Maryland",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case limited Congress's power under the Commerce Clause?",
+            "choices": [
+                "U.S. v. Lopez",
+                "McCulloch v. Maryland",
+                "Gibbons v. Ogden",
+                "Brown v. Board of Education"
+            ],
+            "answer": "U.S. v. Lopez",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case established the principle of implied powers and federal supremacy?",
+            "choices": [
+                "McCulloch v. Maryland",
+                "U.S. v. Lopez",
+                "Marbury v. Madison",
+                "Gibbons v. Ogden"
+            ],
+            "answer": "McCulloch v. Maryland",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case limited Congress's power under the Commerce Clause?",
+            "choices": [
+                "U.S. v. Lopez",
+                "McCulloch v. Maryland",
+                "Gibbons v. Ogden",
+                "Brown v. Board of Education"
+            ],
+            "answer": "U.S. v. Lopez",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case limited Congress's power under the Commerce Clause?",
+            "choices": [
+                "U.S. v. Lopez",
+                "McCulloch v. Maryland",
+                "Gibbons v. Ogden",
+                "Brown v. Board of Education"
+            ],
+            "answer": "U.S. v. Lopez",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case established the principle of implied powers and federal supremacy?",
+            "choices": [
+                "McCulloch v. Maryland",
+                "U.S. v. Lopez",
+                "Marbury v. Madison",
+                "Gibbons v. Ogden"
+            ],
+            "answer": "McCulloch v. Maryland",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case limited Congress's power under the Commerce Clause?",
+            "choices": [
+                "U.S. v. Lopez",
+                "McCulloch v. Maryland",
+                "Gibbons v. Ogden",
+                "Brown v. Board of Education"
+            ],
+            "answer": "U.S. v. Lopez",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case established the principle of implied powers and federal supremacy?",
+            "choices": [
+                "McCulloch v. Maryland",
+                "U.S. v. Lopez",
+                "Marbury v. Madison",
+                "Gibbons v. Ogden"
+            ],
+            "answer": "McCulloch v. Maryland",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case established the principle of implied powers and federal supremacy?",
+            "choices": [
+                "McCulloch v. Maryland",
+                "U.S. v. Lopez",
+                "Marbury v. Madison",
+                "Gibbons v. Ogden"
+            ],
+            "answer": "McCulloch v. Maryland",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case limited Congress's power under the Commerce Clause?",
+            "choices": [
+                "U.S. v. Lopez",
+                "McCulloch v. Maryland",
+                "Gibbons v. Ogden",
+                "Brown v. Board of Education"
+            ],
+            "answer": "U.S. v. Lopez",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case established the principle of implied powers and federal supremacy?",
+            "choices": [
+                "McCulloch v. Maryland",
+                "U.S. v. Lopez",
+                "Marbury v. Madison",
+                "Gibbons v. Ogden"
+            ],
+            "answer": "McCulloch v. Maryland",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case established the principle of implied powers and federal supremacy?",
+            "choices": [
+                "McCulloch v. Maryland",
+                "U.S. v. Lopez",
+                "Marbury v. Madison",
+                "Gibbons v. Ogden"
+            ],
+            "answer": "McCulloch v. Maryland",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case established the principle of implied powers and federal supremacy?",
+            "choices": [
+                "McCulloch v. Maryland",
+                "U.S. v. Lopez",
+                "Marbury v. Madison",
+                "Gibbons v. Ogden"
+            ],
+            "answer": "McCulloch v. Maryland",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case limited Congress's power under the Commerce Clause?",
+            "choices": [
+                "U.S. v. Lopez",
+                "McCulloch v. Maryland",
+                "Gibbons v. Ogden",
+                "Brown v. Board of Education"
+            ],
+            "answer": "U.S. v. Lopez",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case limited Congress's power under the Commerce Clause?",
+            "choices": [
+                "U.S. v. Lopez",
+                "McCulloch v. Maryland",
+                "Gibbons v. Ogden",
+                "Brown v. Board of Education"
+            ],
+            "answer": "U.S. v. Lopez",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case established the principle of implied powers and federal supremacy?",
+            "choices": [
+                "McCulloch v. Maryland",
+                "U.S. v. Lopez",
+                "Marbury v. Madison",
+                "Gibbons v. Ogden"
+            ],
+            "answer": "McCulloch v. Maryland",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case limited Congress's power under the Commerce Clause?",
+            "choices": [
+                "U.S. v. Lopez",
+                "McCulloch v. Maryland",
+                "Gibbons v. Ogden",
+                "Brown v. Board of Education"
+            ],
+            "answer": "U.S. v. Lopez",
+            "topic": "Supreme Court Cases"
+        },
+        {
+            "question": "Which case limited Congress's power under the Commerce Clause?",
+            "choices": [
+                "U.S. v. Lopez",
+                "McCulloch v. Maryland",
+                "Gibbons v. Ogden",
+                "Brown v. Board of Education"
+            ],
+            "answer": "U.S. v. Lopez",
+            "topic": "Supreme Court Cases"
+        }
+    ],
+    "Political Ideologies": [
+        {
+            "question": "Which ideology emphasizes minimal government intervention in personal and economic matters?",
+            "choices": [
+                "Libertarianism",
+                "Socialism",
+                "Liberalism",
+                "Conservatism"
+            ],
+            "answer": "Libertarianism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology supports government programs to reduce economic inequality?",
+            "choices": [
+                "Socialism",
+                "Libertarianism",
+                "Conservatism",
+                "Anarchism"
+            ],
+            "answer": "Socialism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology emphasizes minimal government intervention in personal and economic matters?",
+            "choices": [
+                "Libertarianism",
+                "Socialism",
+                "Liberalism",
+                "Conservatism"
+            ],
+            "answer": "Libertarianism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology supports government programs to reduce economic inequality?",
+            "choices": [
+                "Socialism",
+                "Libertarianism",
+                "Conservatism",
+                "Anarchism"
+            ],
+            "answer": "Socialism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology supports government programs to reduce economic inequality?",
+            "choices": [
+                "Socialism",
+                "Libertarianism",
+                "Conservatism",
+                "Anarchism"
+            ],
+            "answer": "Socialism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology supports government programs to reduce economic inequality?",
+            "choices": [
+                "Socialism",
+                "Libertarianism",
+                "Conservatism",
+                "Anarchism"
+            ],
+            "answer": "Socialism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology emphasizes minimal government intervention in personal and economic matters?",
+            "choices": [
+                "Libertarianism",
+                "Socialism",
+                "Liberalism",
+                "Conservatism"
+            ],
+            "answer": "Libertarianism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology emphasizes minimal government intervention in personal and economic matters?",
+            "choices": [
+                "Libertarianism",
+                "Socialism",
+                "Liberalism",
+                "Conservatism"
+            ],
+            "answer": "Libertarianism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology supports government programs to reduce economic inequality?",
+            "choices": [
+                "Socialism",
+                "Libertarianism",
+                "Conservatism",
+                "Anarchism"
+            ],
+            "answer": "Socialism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology emphasizes minimal government intervention in personal and economic matters?",
+            "choices": [
+                "Libertarianism",
+                "Socialism",
+                "Liberalism",
+                "Conservatism"
+            ],
+            "answer": "Libertarianism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology supports government programs to reduce economic inequality?",
+            "choices": [
+                "Socialism",
+                "Libertarianism",
+                "Conservatism",
+                "Anarchism"
+            ],
+            "answer": "Socialism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology emphasizes minimal government intervention in personal and economic matters?",
+            "choices": [
+                "Libertarianism",
+                "Socialism",
+                "Liberalism",
+                "Conservatism"
+            ],
+            "answer": "Libertarianism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology emphasizes minimal government intervention in personal and economic matters?",
+            "choices": [
+                "Libertarianism",
+                "Socialism",
+                "Liberalism",
+                "Conservatism"
+            ],
+            "answer": "Libertarianism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology supports government programs to reduce economic inequality?",
+            "choices": [
+                "Socialism",
+                "Libertarianism",
+                "Conservatism",
+                "Anarchism"
+            ],
+            "answer": "Socialism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology emphasizes minimal government intervention in personal and economic matters?",
+            "choices": [
+                "Libertarianism",
+                "Socialism",
+                "Liberalism",
+                "Conservatism"
+            ],
+            "answer": "Libertarianism",
+            "topic": "Political Ideologies"
+        },
+        {
+            "question": "Which ideology supports government programs to reduce economic inequality?",
+            "choices": [
+                "Socialism",
+                "Libertarianism",
+                "Conservatism",
+                "Anarchism"
+            ],
+            "answer": "Socialism",
+            "topic": "Political Ideologies"
+        }
+    ]
+};
 
-    const topicSelect = document.getElementById("topicSelect");
-    const questionText = document.getElementById("questionText");
-    const choicesContainer = document.getElementById("choicesContainer");
-    const feedback = document.getElementById("feedback");
-    const progressBar = document.getElementById("progressBar");
-    const scoreDisplay = document.getElementById("scoreDisplay");
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
 
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
+        const topicSelect = document.getElementById("topic");
+        const quizContainer = document.getElementById("quiz-container");
+        const questionBox = document.getElementById("question-box");
+        const choicesList = document.getElementById("choices");
+        const feedback = document.getElementById("feedback");
+        const scoreDisplay = document.getElementById("score");
+        const progressDisplay = document.getElementById("progress");
 
-    function loadQuestion() {
-      if (currentQuestionIndex >= filteredQuestions.length) {
-        questionText.textContent = "🎉 Quiz Complete!";
-        choicesContainer.innerHTML = "";
-        feedback.textContent = "";
-        progressBar.textContent = "";
-        scoreDisplay.textContent = `Final Score: ${score} / ${filteredQuestions.length}`;
-        return;
-      }
+        // Populate topic selector
+        for (const topic in rawQuestions) {
+            const option = document.createElement("option");
+            option.value = topic;
+            option.textContent = topic;
+            topicSelect.appendChild(option);
+        }
 
-      const q = filteredQuestions[currentQuestionIndex];
-      questionText.textContent = q.question;
-      choicesContainer.innerHTML = "";
-      feedback.textContent = "";
-      scoreDisplay.textContent = `Score: ${score} / ${filteredQuestions.length}`;
-      progressBar.textContent = `Question ${currentQuestionIndex + 1} of ${filteredQuestions.length}`;
+        function startQuiz() {
+            const selectedTopic = topicSelect.value;
+            if (!selectedTopic) return;
+            currentQuestions = rawQuestions[selectedTopic];
+            currentIndex = 0;
+            score = 0;
+            quizContainer.style.display = "block";
+            topicSelect.disabled = true;
+            document.querySelector("#topic-selector button").disabled = true;
+            showQuestion();
+        }
 
-      const shuffledChoices = [...q.choices];
-      shuffle(shuffledChoices);
+        function showQuestion() {
+            feedback.textContent = "";
+            const q = currentQuestions[currentIndex];
+            questionBox.textContent = q.question;
+            choicesList.innerHTML = "";
+            q.choices.forEach((choice, index) => {
+                const li = document.createElement("li");
+                const btn = document.createElement("button");
+                btn.textContent = choice;
+                btn.onclick = () => checkAnswer(index);
+                li.appendChild(btn);
+                choicesList.appendChild(li);
+            });
+            scoreDisplay.textContent = `Score: ${score}`;
+            progressDisplay.textContent = `Question ${currentIndex + 1} of ${currentQuestions.length}`;
+        }
 
-      shuffledChoices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.textContent = choice;
-        btn.onclick = () => checkAnswer(choice, q.answer);
-        choicesContainer.appendChild(btn);
-      });
-    }
-
-    function checkAnswer(selected, correct) {
-      if (selected === correct) {
-        feedback.textContent = "✅ Correct!";
-        score++;
-        currentQuestionIndex++;
-        setTimeout(loadQuestion, 1000);
-      } else {
-        feedback.textContent = "❌ Try again.";
-      }
-    }
-
-    topicSelect.addEventListener("change", () => {
-      const selectedTopic = topicSelect.value;
-      currentQuestionIndex = 0;
-      score = 0;
-      if (selectedTopic === "All") {
-        filteredQuestions = [...allQuestions];
-      } else {
-        filteredQuestions = allQuestions.filter(q => q.topic === selectedTopic);
-      }
-      shuffle(filteredQuestions);
-      loadQuestion();
-    });
-
-    // Initialize with all questions
-    topicSelect.value = "All";
-    filteredQuestions = [...allQuestions];
-    shuffle(filteredQuestions);
-    loadQuestion();
-  </script>
+        function checkAnswer(selectedIndex) {
+            const correctIndex = currentQuestions[currentIndex].answer;
+            if (selectedIndex === correctIndex) {
+                feedback.textContent = "✅ Correct!";
+                score++;
+                currentIndex++;
+                if (currentIndex < currentQuestions.length) {
+                    setTimeout(showQuestion, 1000);
+                } else {
+                    feedback.textContent = "🎉 Quiz Complete!";
+                    questionBox.textContent = "";
+                    choicesList.innerHTML = "";
+                    progressDisplay.textContent = `Final Score: ${score} / ${currentQuestions.length}`;
+                }
+            } else {
+                feedback.textContent = "❌ Try again.";
+            }
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
+    </script>
 </body>
 </html>
